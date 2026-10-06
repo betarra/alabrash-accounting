@@ -1,8 +1,8 @@
-/* إعدادات الخطوط والألوان العامة للتصميم الجديد */
+/* إعدادات الخطوط والألوان الاحترافية - متوافق بالكامل مع الجوال */
 @import url('https://googleapis.com');
 
 :root {
-    --primary-burgundy: #801515; /* اللون العنابي الرسمي للتطبيق */
+    --primary-burgundy: #801515;
     --bg-light: #f4f6f9;
     --card-white: #ffffff;
     --text-dark: #333333;
@@ -11,7 +11,7 @@
     --success-green: #2e7d32;
     --accent-blue: #1565c0;
     --warning-orange: #ef6c00;
-    --border-radius: 6px;
+    --border-radius: 8px;
     --transition: all 0.2s ease;
 }
 
@@ -26,56 +26,55 @@ body {
     background-color: var(--bg-light);
     color: var(--text-dark);
     direction: rtl;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
+    font-size: 14px;
+    overflow-x: hidden; /* منع التمرير الجانبي المزعج على الهاتف */
 }
 
-/* الهيدر العلوي العريض */
+/* الهيدر العلوي */
 .app-header {
     background-color: var(--primary-burgundy);
     color: #ffffff;
     text-align: center;
-    padding: 15px 20px;
+    padding: 12px 10px;
 }
 
 .app-header h2 {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    margin-bottom: 5px;
 }
 
 .app-header p {
-    font-size: 0.9rem;
-    opacity: 0.9;
+    font-size: 0.8rem;
+    opacity: 0.8;
 }
 
-/* شريط التبويبات الرئيسي الملاصق للهيدر */
+/* شريط التبويبات العلوي - متجاوب وقابل للسحب الأفقي */
 .main-nav {
     display: flex;
     background-color: #333333;
     width: 100%;
+    overflow-x: auto; /* تمكين التمرير الأفقي للأزرار على الجوال */
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+.main-nav::-webkit-scrollbar {
+    display: none; /* إخفاء شريط التمرير الافتراضي */
 }
 
 .nav-btn {
     flex: 1;
+    min-width: 90px;
     background: transparent;
     border: none;
     color: #bbbbbb;
-    padding: 14px 10px;
-    font-size: 0.95rem;
+    padding: 12px 5px;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition);
     text-align: center;
     border-left: 1px solid #444444;
-}
-
-.nav-btn:last-child {
-    border-left: none;
-}
-
-.nav-btn:hover {
-    background-color: #444444;
-    color: #ffffff;
 }
 
 .nav-btn.active {
@@ -83,245 +82,184 @@ body {
     color: #ffffff;
 }
 
-/* الحاوية العامة للمحتوى */
+/* حاوية المحتوى العام */
 .app-content {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 0 15px;
-}
-
-.screen-section {
-    animation: fadeIn 0.3s ease;
+    padding: 10px;
+    max-width: 100%;
 }
 
 .hidden {
     display: none !important;
 }
 
-/* الكروت البيضاء المريحة للعين */
+/* الكروت البيضاء المرنة */
 .app-card {
     background-color: var(--card-white);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    width: 100%;
 }
 
 .card-title {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--primary-burgundy);
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     border-bottom: 1px solid #eeeeee;
-    padding-bottom: 8px;
+    padding-bottom: 6px;
 }
 
-/* تصميم حقول الإدخال والخطوط المنسدلة */
+/* شبكة النماذج - تتحول تلقائياً من عمود واحد بالجوال إلى عدة أعمدة بالشاشات الكبيرة */
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    margin-bottom: 15px;
+    grid-template-columns: 1fr; /* الافتراضي عمود واحد ليناسب الجوال */
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
-@media(min-width: 768px) {
-    .form-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+@media(min-width: 576px) {
     .form-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+    .form-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .form-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 6px;
-    font-size: 0.88rem;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
     font-weight: 600;
-    color: var(--text-dark);
 }
 
 select, input[type="text"], input[type="number"] {
     width: 100%;
-    padding: 8px 12px;
+    padding: 10px; /* زيادة مساحة اللمس المريحة لليد */
     border: 1px solid #cccccc;
     border-radius: var(--border-radius);
     font-size: 0.95rem;
     outline: none;
     background-color: #ffffff;
-    color: #333333;
+    height: 42px;
 }
 
-select:focus, input:focus {
-    border-color: var(--primary-burgundy);
-    box-shadow: 0 0 5px rgba(128, 21, 21, 0.15);
-}
-
-/* شارات معلومات المخزون والتكلفة الاسترشادية */
+/* صندوق عرض كمية الجرد الكبير */
 .info-hint-box {
     background-color: #fff8f8;
     border: 1px dashed #ffcccc;
-    padding: 10px;
+    padding: 8px;
     border-radius: var(--border-radius);
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .stock-count {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     font-weight: 700;
     color: var(--primary-burgundy);
-    margin-top: 2px;
 }
 
-/* الجداول الاحترافية الفاتحة */
+/* تحويل الجداول إلى حاوية مرنة قابلة للتمرير الجانبي على الجوال لمنع الانضغاط */
+#print-area {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
 .invoice-table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
+    margin-top: 5px;
+    min-width: 450px; /* الحفاظ على مسافة مريحة لبيانات السطر */
+}
+
+.invoice-table th, .invoice-table td {
+    padding: 8px 6px;
+    border-bottom: 1px solid #eeeeee;
+    font-size: 0.85rem;
     text-align: right;
-    font-size: 0.95rem;
 }
 
 .invoice-table th {
     background-color: #f8f9fa;
-    color: var(--text-dark);
     font-weight: 700;
-    padding: 12px;
-    border-bottom: 2px solid var(--border-color);
 }
 
-.invoice-table td {
-    padding: 12px;
-    border-bottom: 1px solid #eeeeee;
-    color: #444444;
-}
-
-/* المجموع الكلي العريض والخصم السفلي */
+/* صندوق ملخص الفاتورة السفلي */
 .summary-box {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
     margin-top: 15px;
-    gap: 10px;
+    width: 100%;
 }
 
 .discount-row {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 10px;
+    margin-bottom: 8px;
     width: 100%;
-    justify-content: flex-end;
 }
 
 .discount-row input {
-    width: 150px;
-    text-align: center;
+    width: 50% !important;
 }
 
+/* ويدجت المجموع الإجمالي الفاتح */
 .total-grand-badge {
-    background-color: #e0e0e0;
+    background-color: #f1f3f5;
     color: var(--primary-burgundy);
-    font-size: 1.2rem;
+    font-size: 1.05rem;
     font-weight: 700;
-    padding: 10px 20px;
+    padding: 10px;
     border-radius: var(--border-radius);
-    display: inline-block;
-    width: auto;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
 }
 
-/* أزرار العمليات العريضة والمطابقة للصورة */
+/* أزرار العمليات الكبيرة */
 .action-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 10px;
+    margin-top: 15px;
 }
 
-@media(min-width: 576px) {
-    .action-grid { grid-template-columns: 1fr 1fr; }
-}
-
-.btn-burgundy {
+.btn-burgundy, .btn-green-archive, .btn-gray-print, .btn-orange-close {
     width: 100%;
     padding: 12px;
-    background-color: var(--primary-burgundy);
-    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
     border: none;
     border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.btn-gray-print {
-    padding: 12px;
-    background-color: #78909c;
-    color: #ffffff;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-weight: 700;
     cursor: pointer;
     text-align: center;
+    display: block;
 }
 
-.btn-green-archive {
-    padding: 12px;
-    background-color: var(--success-green);
-    color: #ffffff;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    text-align: center;
-}
+.btn-burgundy { background-color: var(--primary-burgundy); color: #ffffff; }
+.btn-green-archive { background-color: var(--success-green); color: #ffffff; }
+.btn-gray-print { background-color: #78909c; color: #ffffff; }
+.btn-orange-close { background-color: var(--warning-orange); color: #ffffff; margin-top: 10px; }
 
-.btn-orange-close {
-    padding: 10px 24px;
-    background-color: var(--warning-orange);
-    color: #ffffff;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 10px;
-    display: inline-block;
-}
-
-.btn-burgundy:hover, .btn-gray-print:hover, .btn-green-archive:hover, .btn-orange-close:hover {
-    filter: brightness(0.9);
-}
-
-/* قسم ترحيل وإغلاق الوردية */
+/* بطاقة إغلاق الوردية */
 .close-shift-card {
     background-color: #fffde7;
     border: 1px solid #fff59d;
     text-align: center;
-    padding: 25px;
+    padding: 15px;
     border-radius: var(--border-radius);
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
-.close-shift-card p {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    margin-bottom: 5px;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* إعدادات طابعات الفواتير المحمولة */
+/* ستايل المعاينة النظيفة عند الطباعة الحرارية للزبون */
 @media print {
     .main-nav, .pos-entry, .no-print, .action-grid, .close-shift-card, th:last-child, td:last-child {
         display: none !important;
     }
-       .print-header { display: block !important; text-align: center; }
-
-    /* إخفاء حواف حقول الإدخال والأسهم تماماً عند الطباعة لتبدو كنص عادي */
+    body { background: #fff !important; color: #000 !important; padding: 0; }
+    .app-card { border: none !important; box-shadow: none !important; padding: 0 !important; }
+    
     input[type="number"] {
         -webkit-appearance: none;
         -moz-appearance: textfield;
@@ -330,16 +268,7 @@ select:focus, input:focus {
         background: transparent !important;
         box-shadow: none !important;
         color: black !important;
-        font-size: 1.1rem !important;
         font-weight: bold !important;
-        text-align: right !important;
         padding: 0 !important;
-    }
-
-    /* إخفاء أسهم الزيادة والنقصان في متصفحات كروم وإيدج وسفاري */
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
     }
 }
