@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>شركة عبد الحميد الأبرش للألبسة - نظام الديون والجرد</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+    <!-- الهيدر العلوي العريض الرسمي -->
+    <header class="app-header">
+        <h2>شركة عبد الحميد الأبرش للألبسة</h2>
+        <p>النظام الذكي المتكامل للمبيعات، الجرد، وإدارة الديون</p>
+    </header>
+
+    <!-- شريط التبويبات الرئيسي المطور (يحتوي على خانة الدين العام الجديدة) -->
+    <nav class="main-nav">
+        <button class="nav-btn active" onclick="switchScreen('sales-screen')">🛒 إنشاء فاتورة</button>
+        <button class="nav-btn" onclick="switchScreen('debts-screen')">📊 الدين العام</button>
+        <button class="nav-btn" onclick="switchScreen('inventory-screen')">📦 الجرد المخزني</button>
+        <button class="nav-btn" onclick="switchScreen('reports-screen')">💰 الأرباح والمبيعات</button>
+        <button class="nav-btn" onclick="switchScreen('add-product-screen')">➕ إضافة مادة</button>
+    </nav>
+
+    <!-- حاوية المحتوى الرئيسية للميدان -->
+    <main class="app-content">
+        
+        <!-- 1. شاشة إنشاء الفاتورة الأساسية -->
+        <section id="sales-screen" class="screen-section">
+            
+            <!-- كرت إضافة مادة إلى الفاتورة الحالية -->
+            <div class="app-card pos-entry">
+                <div class="card-title">إضافة مادة إلى الفاتورة الحالية</div>
+                
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label>نوع البيع:</label>
+                        <select id="pos-sale-type" onchange="handleProductSelection()">
+                            <option value="retail">مفرق</option>
+                            <option value="wholesale">جملة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>اسم الزبون / المحل (مهم جداً للتوثيق والديون):</label>
+                        <input type="text" id="pos-customer-name" placeholder="أدخل اسم المشتري كاملاً">
+                    </div>
+                </div>
+
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label>اختر الصنف من المستودع:</label>
+                        <select id="pos-product-select" onchange="handleProductSelection()">
+                            <option value="">-- اختر مادة من القائمة --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>القياس / المقاس:</label>
+                        <select id="pos-size">
+                            <option value="S">S</option>
+                            <option value="M">M</option>
+                            <option value="L">L</option>
+                            <option value="XL">XL</option>
+                            <option value="XXL">XXL</option>
+                            <option value="ولادي">ولادي</option>
+                            <option value="رجالي">رجالي</option>
+                            <option value="نسائي">نسائي</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- خانة الكمية المتاحة بالجرد الاسترشادية لسرية العمل -->
+                <div class="info-hint-box">
+                    <label style="font-size: 0.85rem; color: var(--text-muted);">الكمية المتاحة بالجرد الحالية بالسيارة</label>
+                    <div id="pos-stock-qty" class="stock-count">0</div>
+                    <div id="cost-hint" style="display:none;"></div>
+                </div>
+
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label>السعر النهائي المقدر للبيع ($):</label>
+                        <input type="number" id="pos-unit-price" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>الكمية المطلوب بيعها:</label>
+                        <input type="number" id="pos-qty" value="1" min="1">
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px;">
+                    <button class="btn-burgundy" onclick="addItemToInvoice()">➕ إضافة السلعة للفاتورة</button>
+                </div>
+            </div>
+            <!-- كرت مكونات الفاتورة الحالية والحسابات والطباعة -->
+            <div class="app-card">
+                <div class="card-title">مكونات الفاتورة الحالية</div>
+                
+                <div id="print-area">
+                    <!-- ترويسة مخفية تظهر فقط عند طباعة الفاتورة للزبون -->
+                    <div class="print-header" style="display:none; text-align: center; margin-bottom: 20px;">
+                        <h2>فاتورة مبيعات - شركة عبد الحميد الأبرش للألبسة</h2>
+                        <p id="print-date"></p>
+                        <p id="print-cust-name"></p>
+                        <hr style="border: 0; border-top: 1px dashed #000; margin: 10px 0;">
+                    </div>
+
+                    <table class="invoice-table">
+                        <thead>
+                            <tr>
+                                <th>اسم المادة</th>
+                                <th>المقاس</th>
+                                <th>الكمية</th>
+                                <th>السعر</th>
+                                <th>الإجمالي</th>
+                                <th class="no-print">إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="invoice-items-body">
+                            <!-- المواد المضافة تظهر هنا تلقائياً -->
+                        </tbody>
+                    </table>
+
+                    <div class="summary-box">
+                                        <div class="summary-box">
+                        <div class="form-grid cols-2" style="width: 100%; margin-top: 15px;">
+                            <!-- خانة الخصم الإضافي للزبون المباشر -->
+                            <div class="form-group discount-row">
+                                <label style="font-weight: bold; color: var(--primary-burgundy);">خصم للزبون ($):</label>
+                                <input type="number" id="inv-discount" value="0" min="0" step="0.01" oninput="recalcInvoiceTotals()">
+                            </div>
+                            <!-- خانة المدفوع نقداً لتحديد المتبقي كدين تلقائي -->
+                            <div class="form-group discount-row">
+                                <label style="font-weight: bold; color: var(--accent-blue);">المدفوع نقداً ($):</label>
+                                <input type="number" id="inv-paid" value="0" min="0" step="0.01" oninput="calcRemainingBalance()">
+                            </div>
+                        </div>
+                        
+                        <!-- التوزيع المطور الجديد الذي يظهر المجموع الكلي والصافي والدين -->
+                        <div class="form-grid cols-3" style="width: 100%; margin-top: 5px; background: #f8f9fa; padding: 10px; border-radius: var(--border-radius); display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">المجموع الكلي:</span>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: #333;"><span id="inv-subtotal">0.00</span> $</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">الصافي النهائي:</span>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: var(--success-green);"><span id="inv-net">0.00</span> $</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="font-size: 0.85rem; color: var(--text-muted);">المتبقي للدفتر (الدين):</span>
+                                <div style="font-size: 1.15rem; font-weight: 700; color: var(--warning-orange);"><span id="inv-remaining">0.00</span> $</div>
+                            </div>
+                        </div>
+                        
+                        <!-- حاوية نص إشعار الخصم للطباعة -->
+                        <div id="print-discount-note" style="display:none; margin-top:10px; font-style: italic; color:#000; text-align:right; width:100%; font-weight: bold;"></div>
+                    </div>
+
+                </div>
+
+                <!-- أزرار العمليات العريضة والمطابقة تماماً لتوزيع صورتك -->
+                <div class="action-grid no-print">
+                    <button class="btn-green-archive" onclick="saveInvoice()">📥 إرسال للأرشيف وحفظ الفاتورة</button>
+                    <button class="btn-gray-print" onclick="printThermalInvoice()">🖨️ طباعة الفاتورة للزبون</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. شاشة دفتر الديون العام وكشوف الحسابات المنسقة (جديدة بالكامل) -->
+        <section id="debts-screen" class="screen-section hidden">
+            <!-- كرت حساب إجمالي الدين العام -->
+            <div class="app-card" style="background-color: #fff8f8; border: 1px solid #ffcccc; text-align: center;">
+                <div class="card-title" style="color: var(--primary-burgundy); border: none; margin-bottom: 0;">إجمالي الدين العام المستحق لك في السوق</div>
+                <div id="global-debt-amount" style="font-size: 2rem; font-weight: 700; color: var(--primary-burgundy); margin-top: 10px;">0.00 $</div>
+            </div>
+
+            <!-- جدول أسماء الزبائن الملخص -->
+            <div class="app-card">
+                <div class="card-title">دفتر الديون - قائمة العملاء والمحلات</div>
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>اسم الزبون / المحل</th>
+                            <th>إجمالي المتبقي عليه للدفتر</th>
+                            <th>إجراءات الحساب</th>
+                        </tr>
+                    </thead>
+                    <tbody id="debts-summary-body">
+                        <!-- تظهر الأسماء وإجمالي ديونهم هنا -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- كرت منبثق مدمج لعرض تفاصيل فواتير زبون معين عند الضغط على اسمه -->
+            <div id="customer-ledger-card" class="app-card hidden" style="border-top: 3px solid var(--accent-blue);">
+                <div class="card-title" style="display: flex; justify-content: space-between; align-items: center;">
+                    <span id="ledger-customer-name" style="color: var(--accent-blue);">كشف حساب فواتير الزبون تفصيلياً</span>
+                    <button class="btn-gray-print" style="padding: 4px 10px; font-size: 0.8rem; background-color: var(--text-muted);" onclick="document.getElementById('customer-ledger-card').classList.add('hidden')">إغلاق الكشف ❌</button>
+                </div>
+                               <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>التاريخ واليوم</th>
+                            <th>حالة الفاتورة</th>
+                            <th>قيمة الدين المستحق</th>
+                            <th>إجراءات التحصيل</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customer-invoices-body">
+                        <!-- فواتير وتواريخ الزبون المحدد تظهر هنا -->
+                    </tbody>
+                </table>
+
+            </div>
+        </section>
+
+        <!-- 3. شاشة الجرد المخزني للبضاعة المتبقية بالسيارة -->
+              <!-- 3. شاشة الجرد المخزني للبضاعة المتبقية بالسيارة -->
+        <section id="inventory-screen" class="screen-section hidden">
+            <div class="app-card">
+                <div class="card-title">جدول جرد المخزون الحالي بالسيارة</div>
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th>اسم المادة</th>
+                            <th>التصنيف</th>
+                            <th>سعر التكلفة</th>
+                            <th>سعر المفرق</th>
+                            <th>سعر الجملة</th>
+                            <th>الكمية المتاحة بالسيارة</th>
+                            <th>إجراء</th> <!-- العمود الجديد المطلوب للحذف -->
+                        </tr>
+                    </thead>
+                    <tbody id="inventory-table-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- 4. شاشة الأرباح والمبيعات للوردية الحالية -->
+        <section id="reports-screen" class="screen-section hidden">
+            <div class="app-card">
+                <div class="card-title">ملخص أرباح ومبيعات الوردية الحالية (قبل الإغلاق)</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center;">
+                    <div style="background:#f8f9fa; padding:15px; border-radius:4px;">
+                        <label style="font-weight:bold; color:var(--text-muted);">إجمالي مبيعات اليوم الحالية</label>
+                        <div id="rep-total-sales" style="font-size:1.5rem; font-weight:700; color:var(--accent-blue);">$0.00</div>
+                    </div>
+                    <div style="background:#f8f9fa; padding:15px; border-radius:4px;">
+                        <label style="font-weight:bold; color:var(--text-muted);">صافي أرباح اليوم الحقيقية</label>
+                        <div id="rep-net-profit" style="font-size:1.5rem; font-weight:700; color:var(--success-green);">$0.00</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. شاشة إضافة مادة جديدة وتحديد الربح تلقائياً -->
+        <section id="add-product-screen" class="screen-section hidden">
+            <div class="app-card" style="max-width: 600px; margin: 0 auto;">
+                <div class="card-title">إضافة مادة جديدة وتحديد الربح تلقائياً</div>
+                
+                <div class="form-group" style="margin-bottom:15px;">
+                    <label>الخيار الأول: اسم ونوع الصنف (مثال: فروة رجالي، قبعة صوف):</label>
+                    <input type="text" id="new-prod-name" placeholder="أدخل اسم المادة">
+                </div>
+
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label>الخيار الثاني: وحدة البيع للتسعير:</label>
+                        <select id="new-prod-unit">
+                            <option value="قطعة">بالقطعة</option>
+                            <option value="دستة">بالدستة (درزينة)</option>
+                            <option value="طرد">بالطرد / الجملة الكبيرة</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>الكمية المتاحة بالسيارة حالياً:</label>
+                        <input type="number" id="new-prod-qty" value="10">
+                    </div>
+                </div>
+
+                <div class="form-grid cols-2">
+                    <div class="form-group">
+                        <label>الخيار الثالث: كم سعر الجملة الأصلي ($):</label>
+                        <input type="number" id="new-prod-cost" step="0.01" oninput="calculateAutomaticFinalPrice()" placeholder="أدخل تكلفة الجملة">
+                    </div>
+                    <div class="form-group">
+                        <label>الخيار الرابع: هامش الربح المئوي (%):</label>
+                        <input type="number" id="new-prod-margin" value="20" min="0" oninput="calculateAutomaticFinalPrice()" placeholder="مثال: 20 أو 25">
+                    </div>
+                </div>
+
+                <div class="info-hint-box" style="background-color: #f1f8e9; border: 1px dashed #81c784; margin-top: 15px;">
+                    <label style="font-weight: bold; color: var(--success-green);">السعر النهائي المحسوب تلقائياً للبيع ($):</label>
+                    <div id="new-prod-final-price-display" style="font-size: 1.6rem; font-weight: 700; color: var(--success-green); margin-top: 5px;">0.00</div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button class="btn-burgundy" style="background-color: var(--success-green);" onclick="saveProductToDB()">💾 إدراج الصنف للمخزن الحركي</button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
